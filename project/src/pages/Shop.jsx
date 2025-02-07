@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { product } from '../data/products';
+// import { product } from '../data/products';
 import { Star, Grid, LayoutGrid, List, Menu } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import axios from "axios";
 
 const Shop = () => {
   const { addToCart } = useCart();
@@ -10,6 +11,21 @@ const Shop = () => {
   const [selectedPriceRange, setSelectedPriceRange] = useState('all');
   const [view, setView] = useState('grid');
   const [showMore, setShowMore] = useState(false);
+  const [product, setProducts] = useState([]);
+  useEffect(()=>{
+    const fetchdata = async() =>{
+      try {
+        const responce = await axios.get('http://localhost:3000/api/products')
+        if(responce.status == 200){
+          setProducts(responce.data)
+        }
+      } catch (error) {
+        console.log('fetch error = ', error);
+        
+      }
+    }
+    fetchdata();
+  }, [])
 
   const ITEMS_PER_PAGE = 8;
   
@@ -119,7 +135,7 @@ const Shop = () => {
         } gap-6 mb-8`}>
           {displayedProducts.map((product) => (
             <div key={product.id} className="group">
-              <Link to={`/product/${product.id}`} className="block">
+              <Link to={`/product/${product._id}`} className="block">
                 <div className="relative mb-4">
                   <img
                     src={product.image}
