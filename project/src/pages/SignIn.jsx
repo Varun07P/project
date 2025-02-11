@@ -1,10 +1,34 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import AuthContext from '../components/context/AuthContext';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
-  
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState({ 
+    email:  '', 
+    password: '' 
+  });
+  const { email, password } = formData;
+  const { login, isAuthenticated, error, clearErrors, loading } = useContext(AuthContext);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true)
+    const result = await login({ email, password });
+
+    if (result) {
+      setIsLoading(false)
+      navigate('/');
+    }else{
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 gap-8 p-4 md:p-8">
       <div className="flex flex-col justify-center">
@@ -25,10 +49,12 @@ const SignIn = () => {
           Don't have an account yet? <Link to="/signup" className="text-green-600 hover:underline">Sign Up</Link>
         </p>
         
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <input
               type="text"
+              name='email'
+              onChange={handleChange}
               placeholder="Your username or email address"
               className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
             />
@@ -37,11 +63,13 @@ const SignIn = () => {
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
+              name='password'
               placeholder="Password"
+              onChange={handleChange}
               className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
             />
             <button
-              type="button"
+              type="submit"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
             >

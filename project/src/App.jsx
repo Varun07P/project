@@ -12,6 +12,7 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import { CartProvider } from './context/CartContext';
 import Footer from './components/Footer';
+import PrivateRoute from './components/privateroute/PrivateRoute';
 
 function App() {
   return (
@@ -21,13 +22,16 @@ function App() {
           <Header />
           <Routes>
             <Route path="/" element={
-              <main>
+             <PrivateRoute>
+
+            <main>
                 <Hero />
                 <Categories />
                 <NewArrivals />
                 <Features />
                 <Newsletter />
               </main>
+             </PrivateRoute>
             } />
             <Route path="/shop" element={<Shop />} />
             <Route path="/product/:id" element={<ProductDetails />} />
