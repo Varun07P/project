@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Star, Minus, Plus, Heart, Share2 } from 'lucide-react';
 import { product } from '../data/products';
 import { useCart } from '../context/CartContext';
 import RelatedProducts from '../components/RelatedProducts';
+import axios from "axios";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -11,9 +12,10 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = React.useState(1);
   const [selectedImage, setSelectedImage] = React.useState(0);
 
-  const currentProduct = product.find(p => p.id === id);
+  // const currentProduct = product.find(p => p.id === id);
+  const [currentProduct, setCurrentProduct] = useState({})
   const relatedProducts = product.filter(p => 
-    p.category === currentProduct.category && p.id !== currentProduct.id
+    p.category === currentProduct?.category && p.id !== currentProduct.id
   );
 
   if (!currentProduct) {
@@ -32,6 +34,20 @@ const ProductDetails = () => {
 
   const totalPrice = currentProduct.price * quantity;
 
+  useEffect(()=>{
+    const fetchdata = async() =>{
+      try {
+        const responce = await axios.get(`http://localhost:4000/api/products/${id}`)
+        if(responce.status == 200){
+          console.log(responce.data);
+          setCurrentProduct(responce.data)
+        }
+      } catch (error) {
+        console.log('fetch error = ', error);
+      }
+    }
+    fetchdata();
+  }, [])
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumb */}

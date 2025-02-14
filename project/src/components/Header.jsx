@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, ShoppingCart, User, LogOut, Package, Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Cart from './Cart';
 import { useCart } from '../context/CartContext';
 
@@ -11,12 +11,17 @@ const Header = () => {
   const { items } = useCart();
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-
+  const navigate = useNavigate();
+  const logout = () =>{
+    localStorage.removeItem('token');
+    navigate('/')
+    window.location.reload()
+  }
   return (
     <>
       <header className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold">3legant</Link>
+          <Link to="/" className="text-2xl font-bold">Ecommerce</Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-6">
@@ -51,6 +56,7 @@ const Header = () => {
                     Orders
                   </Link>
                   <button
+                  onClick={logout}
                     className="flex items-center w-full px-4 py-2 text-gray-800 hover:bg-gray-100"
                   >
                     <LogOut className="w-4 h-4 mr-2" />
